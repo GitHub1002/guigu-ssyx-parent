@@ -9,7 +9,9 @@ import com.atguigu.ssyx.activity.service.CouponInfoService;
 import com.atguigu.ssyx.model.activity.CouponRange;
 import com.atguigu.ssyx.model.product.Category;
 import com.atguigu.ssyx.model.product.SkuInfo;
+import com.atguigu.ssyx.vo.activity.CouponRuleVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -35,6 +37,9 @@ public class CouponInfoServiceImpl extends ServiceImpl<CouponInfoMapper, CouponI
 
     @Autowired
     private CouponRangeMapper couponRangeMapper;
+
+    @Autowired
+    private CouponInfoMapper couponInfoMapper;
 
     @Autowired
     private ProductFeignClient productFeignClient;
@@ -88,10 +93,39 @@ public class CouponInfoServiceImpl extends ServiceImpl<CouponInfoMapper, CouponI
                 result.put("categoryInfoList", categoryInfoList);
             }
             // 如果规则类型是品牌，得到品牌 id， 远程调用根据多个品牌 Id 值获取对应品牌信息
-            else if(couponInfo.getRangeType() == CouponRangeType.BRAND){
-                List<BrandInfo> brandInfoList = productFeignClient.findBrandInfoList(randIdList);
-            }
+//            else if(couponInfo.getRangeType() == CouponRangeType.BRAND){
+//                List<BrandInfo> brandInfoList = productFeignClient.findBrandInfoList(randIdList);
+//            }
         }
         return result;
+    }
+
+    @Override
+    public void saveCouponRule(CouponRuleVo couponRuleVo) {
+        /*
+        优惠券couponInfo 与 couponRange 要一起操作：先删除couponRange ，更新couponInfo ，再新增couponRange ！
+         */
+        QueryWrapper<CouponRange> couponRangeQueryWrapper = new QueryWrapper<>();
+        couponRangeQueryWrapper.eq("coupon_id",couponRuleVo.getCouponId());
+        couponRangeMapper.delete(couponRangeQueryWrapper);
+
+        //  更新数据
+        CouponInfo couponInfo = this.getById(couponRuleVo.getCouponId());
+        // couponInfo.setCouponType();
+        couponInfo.setRangeType(couponRuleVo.getRangeType());
+        couponInfo.setConditionAmount(couponRuleVo.getConditionAmount());
+        couponInfo.setAmount(couponRuleVo.getAmount());
+        couponInfo.setConditionAmount(couponRuleVo.getConditionAmount());
+        couponInfo.setRangeDesc(couponRuleVo.getRangeDesc());
+
+        couponInfoMapper.updateById(couponInfo);
+
+        //  插入优惠券的规则 couponRangeList
+        List<CouponRange> couponRangeList = couponRuleVo.getCouponRangeList();
+        for (CouponRange couponRange : couponRangeList) {
+            couponRange.setCouponId(couponRuleVo.getCouponId());
+            //  插入数据
+            couponRangeMapper.insert(couponRange);
+        }
     }
 }

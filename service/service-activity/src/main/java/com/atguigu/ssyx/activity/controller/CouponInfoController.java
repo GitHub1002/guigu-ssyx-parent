@@ -4,6 +4,7 @@ package com.atguigu.ssyx.activity.controller;
 import com.atguigu.ssyx.activity.service.CouponInfoService;
 import com.atguigu.ssyx.common.result.Result;
 import com.atguigu.ssyx.model.activity.CouponInfo;
+import com.atguigu.ssyx.vo.activity.CouponRuleVo;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiOperation;
@@ -82,5 +83,11 @@ public class CouponInfoController {
         return Result.ok(couponInfoService.findCouponRuleList(id));
     }
 
+    @ApiOperation(value = "新增活动")
+    @PostMapping("saveCouponRule")
+    public Result saveCouponRule (@RequestBody CouponRuleVo couponRuleVo){
+        couponInfoService.saveCouponRule(couponRuleVo);
+        return Result.ok(null);
+    }
 }
 
