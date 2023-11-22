@@ -23,7 +23,7 @@ import java.util.List;
 @Api(value = "AttrController", tags = "属性管理")
 @RestController
 @RequestMapping("/admin/product/attr")
-@CrossOrigin
+//@CrossOrigin
 public class AttrController {
     @Autowired
     private AttrService attrService;

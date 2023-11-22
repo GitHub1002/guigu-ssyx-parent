@@ -26,7 +26,7 @@ import java.util.List;
 @Api(value = "AttrGroup管理", tags = "平台属性分组管理")
 @RestController
 @RequestMapping("/admin/product/attrGroup")
-@CrossOrigin
+//@CrossOrigin
 public class AttrGroupController {
     @Autowired
     private AttrGroupService attrGroupService;

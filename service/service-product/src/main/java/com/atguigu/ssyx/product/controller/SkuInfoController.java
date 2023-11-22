@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 @Api(value = "skuInfoController", tags = "sku信息管理")
 @RestController
 @RequestMapping("/admin/product/skuInfo")
-@CrossOrigin
+//@CrossOrigin
 public class SkuInfoController {
     @Autowired
     private SkuInfoService skuInfoService;
