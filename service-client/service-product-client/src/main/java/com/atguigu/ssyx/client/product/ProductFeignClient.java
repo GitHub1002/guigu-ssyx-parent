@@ -30,5 +30,8 @@ public interface ProductFeignClient {
     List<SkuInfo> findSkuInfoList(@RequestBody List<Long> skuIdList);
 
     @PostMapping("/api/product/inner/findSkuInfoByKeyword/{keyword}")
-    public List<SkuInfo> findSkuInfoByKeyword(@PathVariable("keyword") String keyword);
+    List<SkuInfo> findSkuInfoByKeyword(@PathVariable("keyword") String keyword);
+
+    @PostMapping("api/product/inner/findCategoryList")
+    List<Category> findCategoryList(@RequestBody List<Long> randIdList);
 }

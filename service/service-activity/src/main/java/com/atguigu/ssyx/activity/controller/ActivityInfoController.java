@@ -58,7 +58,6 @@ public class ActivityInfoController {
         return Result.ok(null);
     }
 
-
     @ApiOperation(value = "根据id列表删除活动")
     @DeleteMapping("batchRemove")
     public Result removeBatch (@RequestParam("ids") List<Long> ids){

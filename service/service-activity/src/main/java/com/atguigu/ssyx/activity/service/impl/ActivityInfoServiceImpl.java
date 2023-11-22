@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,13 +115,24 @@ public class ActivityInfoServiceImpl extends ServiceImpl<ActivityInfoMapper, Act
         // 2) service-activity 远程调用得到 sku 内容列表
         List<SkuInfo> skuInfoList =
                 productFeignClient.findSkuInfoByKeyword(keyword);
+        // 判断：如果根据关键字查询不到匹配内容，直接返回空集合
+        if (skuInfoList.size() == 0){
+            return skuInfoList;
+        }
         // 从 skuInfoList 集合获取所有 skuId
         List<Long> skuIdList = skuInfoList.stream().map(SkuInfo::getId).collect(Collectors.toList());
 
         // 第二步 判断添加之前是否参加过活动， 如果之前参加过，活动正在进行中，排除商品
         // 1) 查询两张表判断 activity_info 和 activity_sku，编写 SQL 语句实现
         List<Long> existSkuIdList = baseMapper.selectSkuIdListExist(skuIdList);
-        // 2) 判断逻辑处理。
+        // 2) 判断逻辑处理：排除已经参加活动商品
+        List<SkuInfo> findSkuList = new ArrayList<>();
+        for (SkuInfo skuInfo :
+                skuInfoList) {
+            if (!existSkuIdList.contains(skuInfo.getId())) {
+                findSkuList.add(skuInfo);
+            }
+        }
         return skuInfoList;
     }
 }
